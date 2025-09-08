@@ -9,4 +9,10 @@ def hp_display(current_hp, max_hp):
     bars = int(percent / 10)          # each bar = 10%
     line = "[" + "-" * bars + "_" * (10 - bars) + f"] {percent}% HP"
 
+def calculate_damage(attacker, defender, move_power):
+    # Simple Pokémon-style damage formula
+    damage = max(1, (attacker["attack"] - defender["defense"]) + move_power)
+    return damage
+
+
     return line

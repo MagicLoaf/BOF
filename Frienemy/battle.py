@@ -1,6 +1,8 @@
 import os
 import json
-from Frienemy.status import hp_bar, damage_calc
+from Frienemy.status import hp_display, calculate_damage
+from Frienemy.attacks import load_attacks
+
 
 BOXES_PATH = os.path.join("..", "Boxes")
 
