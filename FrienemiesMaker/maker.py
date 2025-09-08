@@ -1,7 +1,7 @@
 # maker.py
 import os
 import json
-from attacks import load_moves
+from Frienemy.attacks import load_moves
 
 BOXES_PATH = os.path.join("..", "Boxes")
 

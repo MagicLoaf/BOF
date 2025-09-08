@@ -1,0 +1,6 @@
+{
+    "TM001": {"name": "Tackle", "power": 40},
+    "TM002": {"name": "Fireball", "power": 60},
+    "TM003": {"name": "Water Jet", "power": 50},
+    "TM004": {"name": "Thunderbolt", "power": 70}
+}
