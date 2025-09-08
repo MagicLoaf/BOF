@@ -1,0 +1,1 @@
+{"name": "MagicLoaf", "stats": {"hp": 240, "attack": 30, "defense": 150, "sp_attack": 150, "sp_defense": 100, "speed": 50}}

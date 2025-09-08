@@ -1,0 +1,1 @@
+{"name": "Ghost", "stats": {"hp": 125, "attack": 95, "defense": 100, "sp_attack": 205, "sp_defense": 97, "speed": 98}}
