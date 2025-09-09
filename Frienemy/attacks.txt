@@ -1,7 +1,7 @@
 {
-    "TM001": {"name": "Wind slash", "power": 40},
-    "TM002": {"name": "Magic Lift", "power": 60},
-    "TM003": {"name": "Water Jet", "power": 50},
-    "TM004": {"name": "Ghost Slam", "power": 70}
+    "TM001": {"name": "Wind slash", "power": 40 "special": "yes", "accuracy"; 96},
+    "TM002": {"name": "Magic Lift", "power": 60 "special": "yes", "accuracy": 94},
+    "TM003": {"name": "Water Jet", "power": 50 "special": "no", "accuracy": 95},
+    "TM004": {"name": "Ghost Slam", "power": 70 "Special": "no", "accuracy": 93}
     
 }
