@@ -1,13 +1,15 @@
 # maker.py
-import os
-import json
 from Frienemy.attacks import load_attacks
+import os, json, math
 
 BOXES_PATH = os.path.join("..", "Boxes")
+os.makedirs(BOXES_PATH, exist_ok=True)
 
 def create_frienemy():
-    # Ensure Boxes folder exists
-    os.makedirs(BOXES_PATH, exist_ok=True)
+    attacks = load_attacks()  # dictionary of all moves
+    tm_codes = list(attacks.keys())  # keep order
+    moves_per_page = 4
+    current_page = 0
 
     name = input("Enter frienemy name: ")
     hp = int(input("HP: "))
@@ -17,23 +19,46 @@ def create_frienemy():
     sp_defense = int(input("Sp. Defense: "))
     speed = int(input("Speed: "))
 
-    # Load available moves from moves.txt
-    all_moves = load_attacks()
-    print("\nAvailable TMs:")
-    for tm, (move_name, power) in all_moves.items():
-        print(f"{tm} - {move_name} (Power {power})")
-
-    # Let user pick up to 4 moves
     chosen_moves = []
+
+    # pick up to 4 moves
     while len(chosen_moves) < 4:
-        tm_choice = input(f"Choose TM for move slot {len(chosen_moves)+1} (or press Enter to stop): ").strip()
-        if tm_choice == "":
+        start = current_page * moves_per_page
+        end = start + moves_per_page
+        page_moves = tm_codes[start:end]
+
+        print("\nAvailable TMs (Page", current_page + 1, "/", math.ceil(len(tm_codes)/moves_per_page), "):")
+        for i, code in enumerate(page_moves, 1):
+            move = attacks[code]
+            print(f"{i}. {code} - {move['name']} (Power {move['power']})")
+
+        print("\nOptions: [1-4] pick move | D = next page | A = previous page | Enter = finish")
+
+        choice = input("Choose: ").strip().upper()
+
+        if choice in ["1","2","3","4"]:
+            idx = int(choice) - 1
+            if idx < len(page_moves):
+                tm_code = page_moves[idx]
+                if tm_code not in chosen_moves:
+                    chosen_moves.append(tm_code)
+                    print(f"Added {attacks[tm_code]['name']}!")
+                else:
+                    print("Already chosen.")
+        elif choice == "D":
+            if end < len(tm_codes):
+                current_page += 1
+            else:
+                print("⚠️ Already on last page.")
+        elif choice == "A":
+            if current_page > 0:
+                current_page -= 1
+            else:
+                print("⚠️ Already on first page.")
+        elif choice == "":
             break
-        if tm_choice in all_moves:
-            chosen_moves.append(tm_choice)
-            print(f"Added {all_moves[tm_choice][0]}")
         else:
-            print("Invalid TM, try again.")
+            print("Invalid input.")
 
     frienemy = {
         "name": name,
@@ -48,9 +73,6 @@ def create_frienemy():
 
     file_path = os.path.join(BOXES_PATH, f"{name}.txt")
     with open(file_path, "w") as f:
-        f.write(json.dumps(frienemy, indent=4))
+        f.write(json.dumps(frienemy, indent=2))
 
-    print(f"\n✅ {name} saved to Boxes/ with {len(chosen_moves)} moves.")
-
-if __name__ == "__main__":
-    create_frienemy()
+    print(f"\n{name} saved to Boxes/ with moves: {', '.join(chosen_moves)}")
