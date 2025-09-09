@@ -18,7 +18,7 @@ def create_frienemy():
     speed = int(input("Speed: "))
 
     # Load available moves from moves.txt
-    all_moves = load_moves()
+    all_moves = load_attacks()
     print("\nAvailable TMs:")
     for tm, (move_name, power) in all_moves.items():
         print(f"{tm} - {move_name} (Power {power})")
