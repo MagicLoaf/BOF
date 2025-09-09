@@ -1,12 +1,10 @@
 # status.py
-
 def hp_display(current_hp, max_hp):
-    """Return HP in [-----____] 60% style."""
-    if current_hp < 0:
-        current_hp = 0
-    percent = int((current_hp / max_hp) * 100)
+    percentage = int((current_hp / max_hp) * 100)
+    filled = "-" * (percentage // 10)
+    empty = "_" * (10 - (percentage // 10))
+    return f"[{filled}{empty}] {percentage}% HP"
 
-    bars = int(percent / 10)          # each bar = 10%
-    line = "[" + "-" * bars + "_" * (10 - bars) + f"] {percent}% HP"
-
+def calculate_damage(attacker, defender, move_power):
+    return max(1, (attacker["attack"] - defender["defense"]) + move_power)
     return line
