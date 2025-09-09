@@ -3,7 +3,13 @@ import json
 from Frienemy.status import hp_display, calculate_damage
 from Frienemy.attacks import load_attacks
 BOXES_PATH = os.path.join("..", "Boxes")
+from Frienemy.damage_calc import calculate_damage
 
+def fight(frienemy1, frienemy2):
+    move = frienemy1["moves"][0]  # or random for CPU
+    damage = calculate_damage(frienemy1, move, frienemy2)
+    frienemy2["hp"] -= damage
+    print(f"{frienemy1['name']} used {move['name']} and dealt {damage} damage!")
 def load_frienemy(name):
     file_path = os.path.join(BOXES_PATH, f"{name}.txt")
     if not os.path.exists(file_path):
