@@ -1,1 +1,0 @@
-{"name": "Azure", "stats": {"hp": 100, "attack": 100, "defense": 80, "sp_attack": 120, "sp_defense": 120, "speed": 200}}

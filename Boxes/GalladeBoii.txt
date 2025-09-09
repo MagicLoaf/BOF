@@ -1,1 +1,0 @@
-{"name": "GalladeBoii", "stats": {"hp": 120, "attack": 190, "defense": 110, "sp_attack": 100, "sp_defense": 90, "speed": 110}}

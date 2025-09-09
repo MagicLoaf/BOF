@@ -1,1 +1,0 @@
-{"name": "Loaf", "stats": {"hp": 50, "attack": 50, "defense": 50, "sp_attack": 50, "sp_defense": 50, "speed": 50}}
