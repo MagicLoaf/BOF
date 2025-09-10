@@ -1,7 +1,23 @@
 {
-    "TM001": {"name": "Wind slash", "power": 40 "special": "yes", "accuracy"; 96},
-    "TM002": {"name": "Magic Lift", "power": 60 "special": "yes", "accuracy": 94},
-    "TM003": {"name": "Water Jet", "power": 50 "special": "no", "accuracy": 95},
-    "TM004": {"name": "Ghost Slam", "power": 70 "Special": "no", "accuracy": 93}
-    
+# format: TMcode,Name,Power,Type,Special(yes/no),Accuracy(0-100)
+TM001,Wind Slash,40,Normal,no,96
+TM002,Fireball,60,Fire,yes,92
+TM003,Water Jet,50,Water,yes,95
+TM004,Thunderbolt,70,Electric,yes,90
+TM005,Ice Shard,50,Ice,no,94
+TM006,Earth Slam,80,Ground,no,88
+TM007,Gust,40,Flying,no,98
+TM008,Leaf Blade,70,Grass,no,92
+TM009,Rock Throw,50,Rock,no,95
+TM010,Shadow Claw,70,Ghost,no,90
+TM011,Dragon Fang,80,Dragon,no,85
+TM012,Poison Fang,50,Poison,no,93
+TM013,Steel Slash,70,Steel,no,89
+TM014,Fairy Kiss,60,Fairy,yes,94
+TM015,Psychic Wave,90,Psychic,yes,87
+TM016,Bug Bite,40,Bug,no,97
+TM017,Dark Pulse,80,Dark,yes,88
+TM018,Meteor Kick,100,Fighting,no,80
+TM019,Sandstorm Blast,60,Rock,yes,90
+TM020,Lunar Beam,120,Fairy,yes,75
 }

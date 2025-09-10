@@ -1,4 +1,0 @@
-TM001,Tackle,40
-TM002,Fireball,55
-TM003,Ice Shard,50
-TM004,Thunderbolt,65
