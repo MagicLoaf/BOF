@@ -71,8 +71,20 @@ def create_frienemy():
         "moves": chosen_moves
     }
 
-    file_path = os.path.join(BOXES_PATH, f"{name}.txt")
-    with open(file_path, "w") as f:
-        f.write(json.dumps(frienemy, indent=2))
+    # ----- SAFE SAVE (updated block) -----
+    # sanitize filename (simple)
+    safe_name = name.strip().replace(" ", "_")
+    file_path = os.path.join(BOXES_PATH, f"{safe_name}.txt")
 
-    print(f"\n{name} saved to Boxes/ with moves: {', '.join(chosen_moves)}")
+    try:
+        # ensure Boxes folder exists (redundant but safe)
+        os.makedirs(BOXES_PATH, exist_ok=True)
+
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(frienemy, f, indent=4)
+
+        abs_path = os.path.abspath(file_path)
+        print(f"\n✅ {name} saved to Boxes/ with moves: {', '.join(chosen_moves)}")
+        print(f"Location: {abs_path}")
+    except Exception as e:
+        print(f"\n❌ Failed to save frienemy {name}: {e}")
