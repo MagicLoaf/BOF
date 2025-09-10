@@ -1,0 +1,15 @@
+{
+    "name": "MagicLoaf",
+    "hp": 165,
+    "attack": 75,
+    "defense": 65,
+    "sp_attack": 110,
+    "sp_defense": 85,
+    "speed": 100,
+    "moves": [
+        "TM001",
+        "TM002",
+        "TM003",
+        "TM004"
+    ]
+}
