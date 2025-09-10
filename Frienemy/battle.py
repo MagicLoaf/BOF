@@ -11,14 +11,95 @@ def fight(frienemy1, frienemy2):
     frienemy2["hp"] -= damage
     print(f"{frienemy1['name']} used {move['name']} and dealt {damage} damage!")
 def load_frienemy(name):
-    file_path = os.path.join(BOXES_PATH, f"{name}.txt")
-    if not os.path.exists(file_path):
-        print(f"{name} not found in Boxes/")
-        return None
-    with open(file_path, "r") as f:
-        return json.load(f)
+    """
+    Robust loader for frienemy files in BOF/Boxes.
 
-def battle(frienemy1, frienemy2):
+    Tries multiple filename variants (with/without .txt/.json, underscores, case variations).
+    First attempts JSON parsing; if that fails, falls back to simple "Key: Value" parsing
+    (useful if you have single-line or human-readable files).
+    If nothing matches, prints the files present in Boxes/ to help debugging.
+
+    Returns: dict (frienemy data) or None on failure.
+    """
+    import os, json, re
+
+    # Compute project root and Boxes path (works regardless of current working dir)
+    ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    BOXES_PATH = os.path.join(ROOT, "Boxes")
+
+    # Ensure Boxes folder exists
+    if not os.path.isdir(BOXES_PATH):
+        print(f"Error: Boxes folder not found at expected path: {BOXES_PATH}")
+        return None
+
+    base = name.strip()
+    # Build candidate filename variants
+    candidates = [
+        base, base + ".txt", base + ".json",
+        base.replace(" ", "_"), base.replace(" ", "_") + ".txt", base.replace(" ", "_") + ".json",
+        base.lower(), base.lower() + ".txt", base.lower() + ".json",
+        base.upper(), base.upper() + ".txt", base.upper() + ".json"
+    ]
+    # Deduplicate while keeping order
+    seen = set()
+    candidates = [c for c in candidates if not (c in seen or seen.add(c))]
+
+    # Try each candidate
+    for cand in candidates:
+        path = os.path.join(BOXES_PATH, cand)
+        if not os.path.exists(path):
+            continue
+        try:
+            text = open(path, "r", encoding="utf-8").read()
+        except Exception as e:
+            print(f"Found file {path} but failed to read it: {e}")
+            continue
+
+        # Try JSON parse first
+        try:
+            data = json.loads(text)
+            return data
+        except json.JSONDecodeError:
+            # Not JSON — fall back to simple "Key: Value" parsing
+            try:
+                obj = {}
+                # Catch key:value pairs like "HP:120" or "Name: Chat_GPT" etc.
+                # Also supports comma-separated moves for the 'moves' key.
+                pairs = re.findall(r'([A-Za-z_ ]+):\s*([^\n]+)', text)
+                for k, v in pairs:
+                    key = k.strip().lower().replace(" ", "_")
+                    val = v.strip()
+                    # If the value looks like a list (comma separated)
+                    if "," in val:
+                        obj[key] = [x.strip() for x in val.split(",") if x.strip()]
+                    else:
+                        # try integer conversion
+                        if val.isdigit():
+                            obj[key] = int(val)
+                        else:
+                            # allow moves like TM001,TM002 without spaces
+                            if key == "moves" and re.match(r'^(TM\d+(,TM\d+)*)$', val.replace(" ", "")):
+                                obj[key] = [x.strip() for x in val.split(",") if x.strip()]
+                            else:
+                                obj[key] = val
+                if obj:
+                    return obj
+            except Exception:
+                pass
+
+        # If file was present but couldn't parse, report it so user can inspect
+        print(f"Found file {path} but could not parse it as JSON or key:value text.")
+
+    # Nothing matched — list available files to help the user
+    available = sorted(os.listdir(BOXES_PATH))
+    print(f"{name} not found in Boxes/ (tried: {candidates}).")
+    if available:
+        print("Available files in Boxes/:")
+        for a in available:
+            print("  -", a)
+    else:
+        print("Boxes/ is empty.")
+    return Nonedef battle(frienemy1, frienemy2):
     hp1, hp2 = frienemy1["hp"], frienemy2["hp"]
     max_hp1, max_hp2 = hp1, hp2
 
