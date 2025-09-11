@@ -1,4 +1,4 @@
-# BOF
+# BOF 1.7
 A battle simulator for the best of frenemies
 
 This is a personal project to see if I can make lore accurate characters for my friends and check who will win it all!! 
