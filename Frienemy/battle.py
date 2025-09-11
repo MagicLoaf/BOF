@@ -1,22 +1,63 @@
+import random
 from Frienemy.status import hp_display
 from Frienemy.damage_calc import calculate_damage
 
+def normalize_moves(frienemy):
+    """
+    Ensure frienemy["moves"] is always a list of dicts with 'name' and 'power'.
+    Works for both JSON (already structured) and TXT (string list) formats.
+    """
+    moves = frienemy.get("moves", [])
+    normalized = []
+
+    for move in moves:
+        if isinstance(move, dict):
+            # already in correct format
+            if "name" in move and "power" in move:
+                normalized.append(move)
+        elif isinstance(move, str):
+            # fallback: convert string to basic move
+            normalized.append({"name": move, "power": 50})
+    
+    # default fallback if no moves are found
+    if not normalized:
+        normalized = [{"name": "Struggle", "power": 10}]
+    
+    frienemy["moves"] = normalized
+    return frienemy
+
+
 def battle(frienemy1, frienemy2):
+    # normalize moves so battle doesn’t crash
+    frienemy1 = normalize_moves(frienemy1)
+    frienemy2 = normalize_moves(frienemy2)
+
     hp1, hp2 = frienemy1["hp"], frienemy2["hp"]
     max_hp1, max_hp2 = hp1, hp2
 
     print(f"⚔️ Battle Start: {frienemy1['name']} vs {frienemy2['name']} ⚔️")
 
     while hp1 > 0 and hp2 > 0:
-        # Each frienemy attacks once per turn
-        hp2 -= calculate_damage(frienemy1, frienemy2)
-        hp1 -= calculate_damage(frienemy2, frienemy1)
+        # Pick random moves for each frienemy
+        move1 = random.choice(frienemy1["moves"])
+        move2 = random.choice(frienemy2["moves"])
 
-        # Clamp HP to 0
-        hp1 = max(hp1, 0)
+        # First frienemy attacks
+        dmg1 = calculate_damage(frienemy1, move1, frienemy2)
+        hp2 -= dmg1
         hp2 = max(hp2, 0)
+        print(f"{frienemy1['name']} used {move1['name']}! ({dmg1} dmg)")
 
-        # Print HP bars
+        if hp2 <= 0:
+            break
+
+        # Second frienemy attacks
+        dmg2 = calculate_damage(frienemy2, move2, frienemy1)
+        hp1 -= dmg2
+        hp1 = max(hp1, 0)
+        print(f"{frienemy2['name']} used {move2['name']}! ({dmg2} dmg)")
+
+        # Show HP bars after each round
         print(f"{frienemy1['name']}: {hp_display(hp1, max_hp1)}")
         print(f"{frienemy2['name']}: {hp_display(hp2, max_hp2)}")
         print()
