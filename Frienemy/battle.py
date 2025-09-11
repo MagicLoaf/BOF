@@ -1,71 +1,35 @@
-import random
-from Frienemy.status import hp_display
 from Frienemy.damage_calc import calculate_damage
+from Frienemy.status import hp_display
+from Frienemy.attacks import load_attacks
 
-def normalize_moves(frienemy):
-    """
-    Ensure frienemy["moves"] is always a list of dicts with 'name' and 'power'.
-    Works for both JSON (already structured) and TXT (string list) formats.
-    """
-    moves = frienemy.get("moves", [])
-    normalized = []
-
-    for move in moves:
-        if isinstance(move, dict):
-            # already in correct format
-            if "name" in move and "power" in move:
-                normalized.append(move)
-        elif isinstance(move, str):
-            # fallback: convert string to basic move
-            normalized.append({"name": move, "power": 50})
-    
-    # default fallback if no moves are found
-    if not normalized:
-        normalized = [{"name": "Struggle", "power": 10}]
-    
-    frienemy["moves"] = normalized
-    return frienemy
-
-
-def battle(frienemy1, frienemy2):
-    # normalize moves so battle doesn’t crash
-    frienemy1 = normalize_moves(frienemy1)
-    frienemy2 = normalize_moves(frienemy2)
-
-    hp1, hp2 = frienemy1["hp"], frienemy2["hp"]
+def battle(f1, f2):
+    hp1, hp2 = f1["hp"], f2["hp"]
     max_hp1, max_hp2 = hp1, hp2
+    attacks = load_attacks()
 
-    print(f"⚔️ Battle Start: {frienemy1['name']} vs {frienemy2['name']} ⚔️")
+    print(f"⚔️ Battle Start: {f1['name']} vs {f2['name']} ⚔️")
 
     while hp1 > 0 and hp2 > 0:
-        # Pick random moves for each frienemy
-        move1 = random.choice(frienemy1["moves"])
-        move2 = random.choice(frienemy2["moves"])
-
-        # First frienemy attacks
-        dmg1 = calculate_damage(frienemy1, move1, frienemy2)
-        hp2 -= dmg1
-        hp2 = max(hp2, 0)
-        print(f"{frienemy1['name']} used {move1['name']}! ({dmg1} dmg)")
+        # Frienemy 1 move
+        move_code1 = f1["moves"][0] if f1["moves"] else None
+        move1 = attacks.get(move_code1, {}) if move_code1 else None
+        dmg1 = calculate_damage(f1, f2, move1)
+        hp2 = max(0, hp2 - dmg1)
+        print(f"{f1['name']} used {move1['name'] if move1 else 'Attack'} → {dmg1} dmg")
+        hp_display(f2["name"], hp2, max_hp2)
 
         if hp2 <= 0:
+            print(f"🏆 {f1['name']} wins!")
             break
 
-        # Second frienemy attacks
-        dmg2 = calculate_damage(frienemy2, move2, frienemy1)
-        hp1 -= dmg2
-        hp1 = max(hp1, 0)
-        print(f"{frienemy2['name']} used {move2['name']}! ({dmg2} dmg)")
+        # Frienemy 2 move
+        move_code2 = f2["moves"][0] if f2["moves"] else None
+        move2 = attacks.get(move_code2, {}) if move_code2 else None
+        dmg2 = calculate_damage(f2, f1, move2)
+        hp1 = max(0, hp1 - dmg2)
+        print(f"{f2['name']} used {move2['name'] if move2 else 'Attack'} → {dmg2} dmg")
+        hp_display(f1["name"], hp1, max_hp1)
 
-        # Show HP bars after each round
-        print(f"{frienemy1['name']}: {hp_display(hp1, max_hp1)}")
-        print(f"{frienemy2['name']}: {hp_display(hp2, max_hp2)}")
-        print()
-
-    # Winner
-    if hp1 > 0:
-        print(f"🏆 {frienemy1['name']} wins!")
-    elif hp2 > 0:
-        print(f"🏆 {frienemy2['name']} wins!")
-    else:
-        print("🤝 It's a draw!")
+        if hp1 <= 0:
+            print(f"🏆 {f2['name']} wins!")
+            break
